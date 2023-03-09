@@ -147,10 +147,12 @@ export default function Create() {
             <label htmlFor="positionWest" className="form-check-label">West</label>
           </div>
         </div>
+        <br />
+
         <div className="form-group">
           <input
             type="submit"
-            value="Create person"
+            value="Create Agent"
             className="btn btn-primary"
           />
         </div>

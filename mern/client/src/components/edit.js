@@ -180,7 +180,7 @@ export default function Edit() {
         <div className="form-group">
           <input
             type="submit"
-            value="Update Record"
+            value="Update Agent"
             className="btn btn-primary"
           />
         </div>
