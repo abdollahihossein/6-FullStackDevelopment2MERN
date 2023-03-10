@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
+import { useAuthContext } from '../hooks/useAuthContext';
 
 export default function Create() {
+  const { user } = useAuthContext();
+  const [error, setError] = useState(null);
+
   const [form, setForm] = useState({
     first_name: "",
     last_name: "",
@@ -23,6 +27,12 @@ export default function Create() {
   async function onSubmit(e) {
     e.preventDefault();
 
+    if (!user) {
+      setError('You must be logged in')
+      console.log(error);
+      return
+    }
+
     // When a post request is sent to the create url, we'll add a new record to the database.
     const newPerson = { ...form };
 
@@ -30,6 +40,7 @@ export default function Create() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        'Authorization': `Bearer ${user.token}`
       },
       body: JSON.stringify(newPerson),
     })

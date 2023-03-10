@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
+import { useAuthContext } from '../hooks/useAuthContext';
 
 export default function Edit() {
+  const { user } = useAuthContext();
+  const [error, setError] = useState(null);
+
   const [form, setForm] = useState({
     first_name: "",
     last_name: "",
@@ -17,7 +21,9 @@ export default function Edit() {
   useEffect(() => {
     async function fetchData() {
       const id = params.id.toString();
-      const response = await fetch(`http://localhost:5000/record/${params.id.toString()}`);
+      const response = await fetch(`http://localhost:5000/record/${params.id.toString()}`, {
+        headers: {'Authorization': `Bearer ${user.token}`}
+      });
 
       if (!response.ok) {
         const message = `An error has occured: ${response.statusText}`;
@@ -35,10 +41,12 @@ export default function Edit() {
       setForm(record);
     }
 
-    fetchData();
+    if (user) {
+      fetchData();
+    }
 
     return;
-  }, [params.id, navigate]);
+  }, [params.id, navigate, user]);
 
   // These methods will update the state properties.
   function updateForm(value) {
@@ -49,6 +57,13 @@ export default function Edit() {
 
   async function onSubmit(e) {
     e.preventDefault();
+
+    if (!user) {
+      setError('You must be logged in')
+      console.log(error);
+      return
+    }
+
     const editedPerson = {
       first_name: form.first_name,
       last_name: form.last_name,
@@ -63,7 +78,8 @@ export default function Edit() {
       method: "POST",
       body: JSON.stringify(editedPerson),
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${user.token}`
       },
     });
 

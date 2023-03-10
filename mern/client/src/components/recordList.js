@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const Record = (props) => (
   <tr>
@@ -24,11 +25,14 @@ const Record = (props) => (
 
 export default function RecordList() {
   const [records, setRecords] = useState([]);
+  const { user } = useAuthContext();
 
   // This method fetches the records from the database.
   useEffect(() => {
     async function getRecords() {
-      const response = await fetch(`http://localhost:5000/record/`);
+      const response = await fetch(`http://localhost:5000/record/`, {
+        headers: {'Authorization': `Bearer ${user.token}`}
+      });
 
       if (!response.ok) {
         const message = `An error occured: ${response.statusText}`;
@@ -40,15 +44,23 @@ export default function RecordList() {
       setRecords(records);
     }
 
-    getRecords();
+    if (user) {
+      getRecords();
+    }
 
     return; 
-  }, [records.length]);
+  }, [records.length, user]);
 
   // This method will delete a record
   async function deleteRecord(id) {
+
+    if (!user) {
+      return
+    }
+
     await fetch(`http://localhost:5000/${id}`, {
-      method: "DELETE"
+      method: "DELETE",
+      headers: {'Authorization': `Bearer ${user.token}`}
     });
 
     const newRecords = records.filter((el) => el._id !== id);
