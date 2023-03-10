@@ -1,5 +1,6 @@
 const dbo = require("../db/conn");
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
+const validator = require('validator');
 
 // login a user
 const loginUser = async (req, res) => {
@@ -15,6 +16,20 @@ const signupUser = async (req, response) => {
   let email = req.body.email
   let password = req.body.password
     
+  // validation
+  if (!first_name || !last_name || !email || !password) {
+    response.json('All fields must be filled')
+    return
+  }
+  if (!validator.isEmail(email)) {
+    response.json('Email not valid')
+    return
+  }
+  if (!validator.isStrongPassword(password)) {
+    response.json('Password not strong enough')
+    return
+  }
+
   let count = await db_connect.collection("users").countDocuments({email})
 
   if (count != 0) {
