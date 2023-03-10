@@ -16,13 +16,13 @@ const loginUser = async (req, res) => {
 
   // validation
   if (!email || !password) {
-    res.json('All fields must be filled')
+    res.status(404).json({error: 'All fields must be filled'})
     return
   }
 
   let count = await db_connect.collection("users").countDocuments({email})
   if (count == 0) {
-    res.json('Incorrect email')
+    res.status(405).json({error: 'Incorrect email'})
     return
   }
 
@@ -30,7 +30,7 @@ const loginUser = async (req, res) => {
 
   const match = await bcrypt.compare(password, user[0].password)
   if (!match) {
-    res.json('Incorrect password')
+    res.status(406).json({error: 'Incorrect password'})
     return
   }
 
@@ -50,22 +50,22 @@ const signupUser = async (req, res) => {
     
   // validation
   if (!first_name || !last_name || !email || !password) {
-    res.json('All fields must be filled')
+    res.status(400).json({error: 'All fields must be filled'})
     return
   }
   if (!validator.isEmail(email)) {
-    res.json('Email not valid')
+    res.status(401).json({error: 'Email not valid'})
     return
   }
   if (!validator.isStrongPassword(password)) {
-    res.json('Password not strong enough')
+    res.status(402).json({error: 'Password not strong enough'})
     return
   }
 
   let count = await db_connect.collection("users").countDocuments({email})
 
   if (count != 0) {
-    res.json('Email already in use')
+    res.status(403).json({error: 'Email already in use'})
     return
   }
 
