@@ -1,6 +1,11 @@
 const dbo = require("../db/conn");
 const bcrypt = require('bcrypt');
 const validator = require('validator');
+const jwt = require('jsonwebtoken')
+
+const createToken = (_id) => {
+  return jwt.sign({_id}, process.env.SECRET, { expiresIn: '3d' })
+}
 
 // login a user
 const loginUser = async (req, res) => {
@@ -38,11 +43,16 @@ const signupUser = async (req, response) => {
   }
 
   const salt = await bcrypt.genSalt(10)
-  const hash = await bcrypt.hash(password, salt)
+  const hash = await bcrypt.hash(password, salt) 
 
   db_connect.collection("users").insertOne({ first_name, last_name, email, password: hash }, function (err, res) {
     if (err) throw err;
-    response.json({ first_name, last_name, email, password: hash });
+  });
+  db_connect.collection("users").find({email}).toArray(function (err, user) {
+    if (err) throw err;
+    // create a token
+    const token = createToken(user[0]._id)
+    response.status(200).json({email, token})
   });
 }
 
