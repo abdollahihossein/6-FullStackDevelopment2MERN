@@ -4,6 +4,8 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 
 // We import all the components we need in our app
+import Login from './pages/Login'
+import Signup from './pages/Signup'
 import Navbar from "./components/navbar";
 import RecordList from "./components/recordList";
 import Edit from "./components/edit";
@@ -15,6 +17,8 @@ const App = () => {
       <Navbar />
       <div style={{ margin: 20 }}>
       <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
         <Route exact path="/" element={<RecordList />} />
         <Route path="/edit/:id" element={<Edit />} />
         <Route path="/create" element={<Create />} />

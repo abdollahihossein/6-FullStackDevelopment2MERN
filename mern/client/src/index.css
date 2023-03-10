@@ -1,0 +1,16 @@
+/* navbar */
+nav {
+    display: flex;
+    align-items: center;
+}
+nav a {
+  margin-left: 10px;
+}
+/* auth forms */
+form.signup, form.login {
+  max-width: 235px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #aee3b1;
+  border-radius: 4px;
+}
