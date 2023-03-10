@@ -9,11 +9,38 @@ const createToken = (_id) => {
 
 // login a user
 const loginUser = async (req, res) => {
-  res.json({mssg: 'login user'})
+  let db_connect = dbo.getDb("employees");
+
+  let email = req.body.email
+  let password = req.body.password
+
+  // validation
+  if (!email || !password) {
+    res.json('All fields must be filled')
+    return
+  }
+
+  let count = await db_connect.collection("users").countDocuments({email})
+  if (count == 0) {
+    res.json('Incorrect email')
+    return
+  }
+
+  let user = await db_connect.collection("users").find({email}).toArray()
+
+  const match = await bcrypt.compare(password, user[0].password)
+  if (!match) {
+    res.json('Incorrect password')
+    return
+  }
+
+  // create a token
+  const token = createToken(user[0]._id)
+  res.status(200).json({email, token})
 }
 
 // signup a user
-const signupUser = async (req, response) => {
+const signupUser = async (req, res) => {
   let db_connect = dbo.getDb("employees");
 
   let first_name = req.body.first_name
@@ -23,36 +50,36 @@ const signupUser = async (req, response) => {
     
   // validation
   if (!first_name || !last_name || !email || !password) {
-    response.json('All fields must be filled')
+    res.json('All fields must be filled')
     return
   }
   if (!validator.isEmail(email)) {
-    response.json('Email not valid')
+    res.json('Email not valid')
     return
   }
   if (!validator.isStrongPassword(password)) {
-    response.json('Password not strong enough')
+    res.json('Password not strong enough')
     return
   }
 
   let count = await db_connect.collection("users").countDocuments({email})
 
   if (count != 0) {
-    response.json('Email already in use')
+    res.json('Email already in use')
     return
   }
 
   const salt = await bcrypt.genSalt(10)
   const hash = await bcrypt.hash(password, salt) 
 
-  db_connect.collection("users").insertOne({ first_name, last_name, email, password: hash }, function (err, res) {
+  db_connect.collection("users").insertOne({ first_name, last_name, email, password: hash }, function (err, result) {
     if (err) throw err;
   });
   db_connect.collection("users").find({email}).toArray(function (err, user) {
     if (err) throw err;
     // create a token
     const token = createToken(user[0]._id)
-    response.status(200).json({email, token})
+    res.status(200).json({email, token})
   });
 }
 
