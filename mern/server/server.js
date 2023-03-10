@@ -15,8 +15,8 @@ app.use((req, res, next) => {
 })
 
 // routes
+app.use('/api/user', userRoutes);
 app.use(require("./routes/record"));
-app.use('/api/user', userRoutes)
 
 // get driver connection
 const dbo = require("./db/conn");

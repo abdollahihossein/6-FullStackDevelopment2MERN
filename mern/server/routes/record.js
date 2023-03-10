@@ -1,5 +1,5 @@
 const express = require("express");
-
+const requireAuth = require('../middleware/requireAuth')
 // recordRoutes is an instance of the express router.
 // We use it to define our routes.
 // The router will be added as a middleware and will take control of requests starting with path /record.
@@ -11,6 +11,8 @@ const dbo = require("../db/conn");
 // This help convert the id from string to ObjectId for the _id.
 const ObjectId = require("mongodb").ObjectId;
 
+// require auth for all workout routes
+recordRoutes.use(requireAuth)
 
 // This section will help you get a list of all the agents.
 recordRoutes.route("/record").get(function (req, res) {
