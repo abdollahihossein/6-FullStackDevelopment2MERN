@@ -45,14 +45,14 @@ export default function Navbar() {
         </div>
 
         {user && (
-            <div>
-              <span>{user.email}</span>
+            <div style={{ padding: 30 }}>
+              <span>{user.email} </span>
               <button onClick={handleClick}>Log out</button>
             </div>
         )}
 
         {!user && (
-            <div>
+            <div style={{ padding: 30 }}>
               <Link to="/login">Login</Link>
               <Link to="/signup">Signup</Link>
             </div>
