@@ -5,9 +5,16 @@ import "bootstrap/dist/css/bootstrap.css";
 
 // We import NavLink to utilize the react router.
 import { NavLink, Link } from "react-router-dom";
-
+import { useLogout } from '../hooks/useLogout'
 // Here, we display our Navbar
 export default function Navbar() {
+
+  const { logout } = useLogout()
+
+  const handleClick = () => {
+    logout()
+  }
+
   return (
     <div>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -36,14 +43,15 @@ export default function Navbar() {
           </ul>
         </div>
 
-        
+        <div>
+            <button onClick={handleClick}>Log out</button>
+        </div>
 
-      </nav>
-      <nav>
         <div>
             <Link to="/login">Login</Link>
             <Link to="/signup">Signup</Link>
         </div>
+
       </nav>
     </div>
   );
