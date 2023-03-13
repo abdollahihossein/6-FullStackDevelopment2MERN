@@ -1,5 +1,7 @@
 import { useState } from "react"
 import { useLogin } from "../hooks/useLogin"
+import Success from "../components/success"
+import Fail from "../components/fail"
 
 const Login = () => {
 
@@ -33,6 +35,7 @@ const Login = () => {
       <br/>
       <button disabled={isLoading}>Log in</button>
       {error && <div className="error">{error}</div>}
+      {error && <Fail />}
     </form>
   )
 }
