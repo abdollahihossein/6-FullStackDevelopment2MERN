@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
+import Alertsuccess from '../alerts/alertsuccess'
 
 const Record = (props) => (
   <tr>
@@ -27,6 +28,8 @@ export default function RecordList() {
   const [records, setRecords] = useState([]);
   const { user } = useAuthContext();
 
+  const text = "Deleted"
+  const [show, setShow] = useState(false);
   // This method fetches the records from the database.
   useEffect(() => {
     async function getRecords() {
@@ -58,6 +61,11 @@ export default function RecordList() {
       return
     }
 
+    setShow(true)
+    setTimeout(() => {
+      setShow(false)
+    }, 3000);
+
     await fetch(`http://localhost:5000/${id}`, {
       method: "DELETE",
       headers: {'Authorization': `Bearer ${user.token}`}
@@ -83,6 +91,7 @@ export default function RecordList() {
   // This following section will display the table with the records of individuals.
   return (
     <div>
+      <Alertsuccess modalshow={show} text={text}/>
       <h3>Agent List</h3>
       <table className="table table-striped" style={{ marginTop: 20 }}>
         <thead>

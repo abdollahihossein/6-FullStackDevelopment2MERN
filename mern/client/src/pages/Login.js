@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { useLogin } from "../hooks/useLogin"
-import Success from "../components/success"
-import Failedlogin from "../components/failedlogin"
+import Failedlogin from "../alerts/failedlogin"
 
 const Login = () => {
 

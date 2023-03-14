@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useAuthContext } from '../hooks/useAuthContext';
+import Alertsuccess from '../alerts/alertsuccess'
 
 export default function Edit() {
   const { user } = useAuthContext();
   const [error, setError] = useState(null);
 
+  const text = "Updated"
+  const [show, setShow] = useState(false);
   const [form, setForm] = useState({
     first_name: "",
     last_name: "",
@@ -64,6 +67,8 @@ export default function Edit() {
       return
     }
 
+    setShow(true)
+
     const editedPerson = {
       first_name: form.first_name,
       last_name: form.last_name,
@@ -83,12 +88,15 @@ export default function Edit() {
       },
     });
 
-    navigate("/");
+    setTimeout(() => {
+      navigate("/")
+    }, 3000);
   }
 
   // This following section will display the form that takes input from the user to update the data.
   return (
     <div>
+      <Alertsuccess modalshow={show} text={text}/>
       <h3>Update Agent</h3>
       <form onSubmit={onSubmit}>
         <div className="form-group">

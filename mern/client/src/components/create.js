@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { useAuthContext } from '../hooks/useAuthContext';
+import Alertsuccess from '../alerts/alertsuccess'
 
 export default function Create() {
   const { user } = useAuthContext();
   const [error, setError] = useState(null);
 
+  const text = "Created"
+  const [show, setShow] = useState(false);
   const [form, setForm] = useState({
     first_name: "",
     last_name: "",
@@ -32,6 +35,8 @@ export default function Create() {
       console.log(error);
       return
     }
+    
+    setShow(true)
 
     // When a post request is sent to the create url, we'll add a new record to the database.
     const newPerson = { ...form };
@@ -50,12 +55,15 @@ export default function Create() {
     });
 
     setForm({ first_name: "", last_name: "", email: "", region: "", rating: "", fee: "" });
-    navigate("/");
+    setTimeout(() => {
+      navigate("/")
+    }, 3000);
   }
 
   // This following section will display the form that takes the input from the user.
   return (
     <div>
+      <Alertsuccess modalshow={show} text={text}/>
       <h3>Create New Agent</h3>
       <form onSubmit={onSubmit}>
         <div className="form-group">
