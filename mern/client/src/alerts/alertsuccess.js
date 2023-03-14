@@ -1,12 +1,14 @@
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 
-function Alertsuccess({modalshow, text}) {
+function Alertsuccess({modalshow, setShow, text}) {
+
+  const handleClose = () => setShow(false)
 
   return (
     <>
-      <Modal show={modalshow}>
-        <Modal.Header style={{ justifyContent: 'center', background: 'lightgreen' }}>
+      <Modal show={modalshow} onHide={handleClose}>
+        <Modal.Header style={{ justifyContent: 'center', background: 'lightgreen' }} closeButton>
           <Modal.Title>Agent {text}!</Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ background: 'lightgreen' }}/>

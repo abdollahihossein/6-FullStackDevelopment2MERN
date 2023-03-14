@@ -91,7 +91,7 @@ export default function RecordList() {
   // This following section will display the table with the records of individuals.
   return (
     <div>
-      <Alertsuccess modalshow={show} text={text}/>
+      <Alertsuccess modalshow={show} setShow={setShow} text={text}/>
       <h3>Agent List</h3>
       <table className="table table-striped" style={{ marginTop: 20 }}>
         <thead>

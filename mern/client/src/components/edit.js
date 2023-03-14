@@ -96,7 +96,7 @@ export default function Edit() {
   // This following section will display the form that takes input from the user to update the data.
   return (
     <div>
-      <Alertsuccess modalshow={show} text={text}/>
+      <Alertsuccess modalshow={show} setShow={setShow} text={text}/>
       <h3>Update Agent</h3>
       <form onSubmit={onSubmit}>
         <div className="form-group">

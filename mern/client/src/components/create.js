@@ -55,6 +55,7 @@ export default function Create() {
     });
 
     setForm({ first_name: "", last_name: "", email: "", region: "", rating: "", fee: "" });
+    
     setTimeout(() => {
       navigate("/")
     }, 3000);
@@ -63,7 +64,7 @@ export default function Create() {
   // This following section will display the form that takes the input from the user.
   return (
     <div>
-      <Alertsuccess modalshow={show} text={text}/>
+      <Alertsuccess modalshow={show} setShow={setShow} text={text}/>
       <h3>Create New Agent</h3>
       <form onSubmit={onSubmit}>
         <div className="form-group">
