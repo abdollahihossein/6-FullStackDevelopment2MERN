@@ -8,9 +8,10 @@ import { useAuthContext } from './hooks/useAuthContext'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Navbar from "./components/navbar";
-import RecordList from "./components/recordList";
+import Agents from "./components/agents";
 import Edit from "./components/edit";
 import Create from "./components/create";
+import Home from "./pages/home"
 
 const App = () => {
   const { user } = useAuthContext()
@@ -18,11 +19,12 @@ const App = () => {
   return (
     <div>
       <Navbar />
-      <div style={{ margin: 20 }}>
+      <div style={{ margin: 60 }}>
       <Routes>
         <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
         <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/" />} />
-        <Route exact path="/" element={user ? <RecordList /> : <Navigate to="/login" />} />
+        <Route exact path="/" element={user ? <Home /> : <Navigate to="/login" />} />
+        <Route path="/agents" element={user ? <Agents /> : <Navigate to="/login" />} />
         <Route path="/create" element={user ? <Create /> : <Navigate to="/login" />} />
         <Route path="/edit/:id" element={user ? <Edit /> : <Navigate to="/login" />} />
       </Routes>

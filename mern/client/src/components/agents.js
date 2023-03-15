@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, Link } from "react-router-dom";
-// import { Link } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
 import Alertsuccess from '../alerts/alertsuccess'
 
@@ -27,7 +26,7 @@ const Record = (props) => (
   </tr>
 );
 
-export default function RecordList() {
+export default function Agents() {
   const [records, setRecords] = useState([]);
   const { user } = useAuthContext();
 
