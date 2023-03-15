@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useAuthContext } from '../hooks/useAuthContext';
-import Alertsuccess from '../alerts/alertsuccess'
+import Alertsuccess from '../alerts/alertsuccess';
+import Alertconfirm from "../alerts/alertconfirm";
 
 export default function Edit() {
   const { user } = useAuthContext();
@@ -9,6 +10,9 @@ export default function Edit() {
 
   const text = "Updated"
   const [show, setShow] = useState(false);
+  const [showconfirm, setShowconfirm] = useState(false);
+  const [confirm, setConfirm] = useState(false);
+
   const [form, setForm] = useState({
     first_name: "",
     last_name: "",
@@ -37,7 +41,7 @@ export default function Edit() {
       const record = await response.json();
       if (!record) {
         window.alert(`Record with id ${id} not found`);
-        navigate("/");
+        navigate("/agents");
         return;
       }
 
@@ -66,37 +70,41 @@ export default function Edit() {
       console.log(error);
       return
     }
+    
+    setShowconfirm(true)
 
-    setShow(true)
-
-    const editedPerson = {
-      first_name: form.first_name,
-      last_name: form.last_name,
-      email: form.email,
-      region: form.region,
-      rating: form.rating,
-      fee: form.fee
-    };
-
-    // This will send a post request to update the data in the database.
-    await fetch(`http://localhost:5000/update/${params.id}`, {
-      method: "POST",
-      body: JSON.stringify(editedPerson),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${user.token}`
-      },
-    });
-
-    setTimeout(() => {
-      navigate("/agents")
-    }, 3000);
+    if (confirm) {
+      const editedPerson = {
+        first_name: form.first_name,
+        last_name: form.last_name,
+        email: form.email,
+        region: form.region,
+        rating: form.rating,
+        fee: form.fee
+      };
+  
+      // This will send a post request to update the data in the database.
+      await fetch(`http://localhost:5000/update/${params.id}`, {
+        method: "POST",
+        body: JSON.stringify(editedPerson),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
+        },
+      });
+  
+      setShow(true)
+      setTimeout(() => {
+        navigate("/agents")
+      }, 3000);
+    }
   }
 
   // This following section will display the form that takes input from the user to update the data.
   return (
     <div>
-      <Alertsuccess modalshow={show} setShow={setShow} text={text}/>
+      <Alertconfirm showconfirm={showconfirm} setShowconfirm={setShowconfirm} setConfirm={setConfirm}/>
+      <Alertsuccess show={show} setShow={setShow} text={text}/>
       <h3>Update Agent</h3>
       <form onSubmit={onSubmit}>
         <div className="form-group">
