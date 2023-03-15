@@ -89,7 +89,7 @@ export default function Edit() {
     });
 
     setTimeout(() => {
-      navigate("/")
+      navigate("/agents")
     }, 3000);
   }
 
