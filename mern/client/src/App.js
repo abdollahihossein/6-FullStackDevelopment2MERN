@@ -12,6 +12,7 @@ import Agents from "./components/agents";
 import Edit from "./components/edit";
 import Create from "./components/create";
 import Home from "./pages/home"
+import Transaction from "./pages/transaction";
 
 const App = () => {
   const { user } = useAuthContext()
@@ -27,6 +28,7 @@ const App = () => {
         <Route path="/agents" element={user ? <Agents /> : <Navigate to="/login" />} />
         <Route path="/create" element={user ? <Create /> : <Navigate to="/login" />} />
         <Route path="/edit/:id" element={user ? <Edit /> : <Navigate to="/login" />} />
+        <Route path="/transaction" element={user ? <Transaction /> : <Navigate to="/login" />} />
       </Routes>
       </div>
     </div>

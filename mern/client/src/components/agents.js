@@ -93,7 +93,7 @@ export default function Agents() {
   // This following section will display the table with the records of individuals.
   return (
     <div>
-      <Alertsuccess modalshow={show} setShow={setShow} text={text}/>
+      <Alertsuccess show={show} setShow={setShow} text={text}/>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav ml-auto">

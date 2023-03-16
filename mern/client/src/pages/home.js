@@ -25,7 +25,7 @@ function Home() {
           <Card.Img variant="top" src={transactionpic}/>
           <Card.Body>
             <Card.Title>Transaction</Card.Title>
-            <NavLink className="nav-link" to="/create">
+            <NavLink className="nav-link" to="/transaction">
               <Button variant="success">Go to transaction page</Button>
             </NavLink>
           </Card.Body>
