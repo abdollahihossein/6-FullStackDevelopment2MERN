@@ -1,30 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
-import Alertsuccess from '../alerts/alertsuccess'
+import Alertsuccess from '../alerts/alertsuccess';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
 import "bootstrap/dist/css/bootstrap.css";
 
-const Record = (props) => (
-  <tr>
-    <td>{props.record.first_name}</td>
-    <td>{props.record.last_name}</td>
-    <td>{props.record.email}</td>
-    <td>{props.record.region}</td>
-    <td>{props.record.rating}</td>
-    <td>{props.record.fee}</td>
-    <td>
-      <Link className="btn btn-link" to={`/edit/${props.record._id}`}>Edit</Link> |
-      <button className="btn btn-link"
-        onClick={() => {
-          props.deleteRecord(props.record._id);
-        }}
-      >
-        Delete
-      </button>
-    </td>
-  </tr>
-);
 
 export default function Agents() {
   const [records, setRecords] = useState([]);
@@ -32,6 +14,39 @@ export default function Agents() {
 
   const text = "Deleted"
   const [show, setShow] = useState(false);
+  const [showconfirm, setShowconfirm] = useState(false);
+  const [agenttodelete, setAgenttodelete] = useState(null);
+  const handleShow = (id) => {
+    setShowconfirm(true)
+    setAgenttodelete(id)
+  }
+  const handleClose = () => {
+    setShowconfirm(false)
+    setAgenttodelete(null)
+  }
+
+  const Record = (props) => (
+    <tr>
+      <td>{props.record.first_name}</td>
+      <td>{props.record.last_name}</td>
+      <td>{props.record.email}</td>
+      <td>{props.record.region}</td>
+      <td>{props.record.rating}</td>
+      <td>{props.record.fee}</td>
+      <td>
+        <Link className="btn btn-link" to={`/edit/${props.record._id}`}>Edit</Link> |
+        <button className="btn btn-link"
+          onClick={() => {
+            // props.deleteRecord(props.record._id);
+            handleShow(props.record._id)
+          }}
+        >
+          Delete
+        </button>
+      </td>
+    </tr>
+  );
+
   // This method fetches the records from the database.
   useEffect(() => {
     async function getRecords() {
@@ -56,26 +71,39 @@ export default function Agents() {
     return; 
   }, [records.length, user]);
 
+  // [records.length, user]
+
   // This method will delete a record
+
   async function deleteRecord(id) {
-
-    if (!user) {
-      return
-    }
-
-    setShow(true)
-    setTimeout(() => {
-      setShow(false)
-    }, 3000);
-
-    await fetch(`http://localhost:5000/${id}`, {
+    await fetch(`http://localhost:5000/record/test/${id}`, {
       method: "DELETE",
       headers: {'Authorization': `Bearer ${user.token}`}
     });
 
     const newRecords = records.filter((el) => el._id !== id);
     setRecords(newRecords);
+    handleClose();
   }
+  // async function deleteRecord(id) {
+
+  //   if (!user) {
+  //     return
+  //   }
+
+  //   setShow(true)
+  //   setTimeout(() => {
+  //     setShow(false)
+  //   }, 3000);
+
+  //   await fetch(`http://localhost:5000/${id}`, {
+  //     method: "DELETE",
+  //     headers: {'Authorization': `Bearer ${user.token}`}
+  //   });
+
+  //   const newRecords = records.filter((el) => el._id !== id);
+  //   setRecords(newRecords);
+  // }
 
   // This method will map out the records on the table
   function recordList() {
@@ -83,7 +111,8 @@ export default function Agents() {
       return (
         <Record
           record={record}
-          deleteRecord={() => deleteRecord(record._id)}
+          // deleteRecord={() => deleteRecord(record._id)}
+          handleShowdeletemodal={handleShow}
           key={record._id}
         />
       );
@@ -93,7 +122,21 @@ export default function Agents() {
   // This following section will display the table with the records of individuals.
   return (
     <div>
-      <Alertsuccess show={show} setShow={setShow} text={text}/>
+      {/* <Alertsuccess show={show} setShow={setShow} text={text}/> */}
+      <Modal show={showconfirm} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Deleting Agent</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to continue?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={deleteRecord(agenttodelete)}>
+            Yes
+          </Button>
+          <Button variant="danger" onClick={handleClose}>
+            No
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav ml-auto">

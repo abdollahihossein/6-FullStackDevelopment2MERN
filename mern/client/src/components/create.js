@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { useAuthContext } from '../hooks/useAuthContext';
-import Alertsuccess from '../alerts/alertsuccess'
+import Alertsuccess from '../alerts/alertsuccess';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
 export default function Create() {
   const { user } = useAuthContext();
@@ -9,6 +11,10 @@ export default function Create() {
 
   const text = "Created"
   const [show, setShow] = useState(false);
+  const [showconfirm, setShowconfirm] = useState(false);
+  const handleShow = () => setShowconfirm(true)
+  const handleClose = () => setShowconfirm(false)
+
   const [form, setForm] = useState({
     first_name: "",
     last_name: "",
@@ -35,8 +41,6 @@ export default function Create() {
       console.log(error);
       return
     }
-    
-    setShow(true)
 
     // When a post request is sent to the create url, we'll add a new record to the database.
     const newPerson = { ...form };
@@ -56,6 +60,8 @@ export default function Create() {
 
     setForm({ first_name: "", last_name: "", email: "", region: "", rating: "", fee: "" });
     
+    setShowconfirm(false)
+    setShow(true)
     setTimeout(() => {
       navigate("/agents")
     }, 3000);
@@ -67,6 +73,22 @@ export default function Create() {
       <Alertsuccess show={show} setShow={setShow} text={text}/>
       <h3>Create New Agent</h3>
       <form onSubmit={onSubmit}>
+
+        <Modal show={showconfirm} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Creating Agent</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Are you sure you want to continue?</Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={onSubmit}>
+              Yes
+            </Button>
+            <Button variant="danger" onClick={handleClose}>
+              No
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
         <div className="form-group">
           <label htmlFor="firstname">First Name</label>
           <input
@@ -170,12 +192,11 @@ export default function Create() {
         <br />
 
         <div className="form-group">
-          <input
-            type="submit"
-            value="Create Agent"
-            className="btn btn-primary"
-          />
+          <Button variant="primary" onClick={handleShow}>
+            Create Agent
+          </Button>
         </div>
+
       </form>
     </div>
   );

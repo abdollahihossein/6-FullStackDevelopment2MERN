@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useAuthContext } from '../hooks/useAuthContext';
 import Alertsuccess from '../alerts/alertsuccess';
-import Alertconfirm from "../alerts/alertconfirm";
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
 export default function Edit() {
   const { user } = useAuthContext();
@@ -11,7 +12,8 @@ export default function Edit() {
   const text = "Updated"
   const [show, setShow] = useState(false);
   const [showconfirm, setShowconfirm] = useState(false);
-  const [confirm, setConfirm] = useState(false);
+  const handleShow = () => setShowconfirm(true)
+  const handleClose = () => setShowconfirm(false)
 
   const [form, setForm] = useState({
     first_name: "",
@@ -70,45 +72,57 @@ export default function Edit() {
       console.log(error);
       return
     }
-    
-    setShowconfirm(true)
 
-    if (confirm) {
-      const editedPerson = {
-        first_name: form.first_name,
-        last_name: form.last_name,
-        email: form.email,
-        region: form.region,
-        rating: form.rating,
-        fee: form.fee
-      };
-  
-      // This will send a post request to update the data in the database.
-      await fetch(`http://localhost:5000/update/${params.id}`, {
-        method: "POST",
-        body: JSON.stringify(editedPerson),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.token}`
-        },
-      });
-  
-      setShow(true)
-      setTimeout(() => {
-        navigate("/agents")
-      }, 3000);
-    }
+    const editedPerson = {
+      first_name: form.first_name,
+      last_name: form.last_name,
+      email: form.email,
+      region: form.region,
+      rating: form.rating,
+      fee: form.fee
+    };
+
+    // This will send a post request to update the data in the database.
+    await fetch(`http://localhost:5000/update/${params.id}`, {
+      method: "POST",
+      body: JSON.stringify(editedPerson),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${user.token}`
+      },
+    });
+
+    setShowconfirm(false)
+    setShow(true)
+    setTimeout(() => {
+      navigate("/agents")
+    }, 3000);
   }
 
   // This following section will display the form that takes input from the user to update the data.
   return (
     <div>
-      <Alertconfirm showconfirm={showconfirm} setShowconfirm={setShowconfirm} setConfirm={setConfirm}/>
       <Alertsuccess show={show} setShow={setShow} text={text}/>
       <h3>Update Agent</h3>
       <form onSubmit={onSubmit}>
+
+        <Modal show={showconfirm} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Updating Agent</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Are you sure you want to continue?</Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={onSubmit}>
+              Yes
+            </Button>
+            <Button variant="danger" onClick={handleClose}>
+              No
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
         <div className="form-group">
-          <label htmlFor="firstname">First Name: </label>
+          <label htmlFor="firstname">First Name</label>
           <input
             type="text"
             className="form-control"
@@ -118,7 +132,7 @@ export default function Edit() {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="lastname">Last Name: </label>
+          <label htmlFor="lastname">Last Name</label>
           <input
             type="text"
             className="form-control"
@@ -128,7 +142,7 @@ export default function Edit() {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="email">Email: </label>
+          <label htmlFor="email">Email</label>
           <input
             type="text"
             className="form-control"
@@ -138,7 +152,7 @@ export default function Edit() {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="rating">Rating: </label>
+          <label htmlFor="rating">Rating</label>
           <input
             type="number"
             className="form-control"
@@ -148,7 +162,7 @@ export default function Edit() {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="fee">Fee: </label>
+          <label htmlFor="fee">Fee</label>
           <input
             type="number"
             className="form-control"
@@ -210,12 +224,11 @@ export default function Edit() {
         <br />
 
         <div className="form-group">
-          <input
-            type="submit"
-            value="Update Agent"
-            className="btn btn-primary"
-          />
+          <Button variant="primary" onClick={handleShow}>
+            Update Agent
+          </Button>
         </div>
+
       </form>
     </div>
   );
