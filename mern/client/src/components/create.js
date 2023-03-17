@@ -9,7 +9,7 @@ export default function Create() {
   const { user } = useAuthContext();
   const [error, setError] = useState(null);
 
-  const text = "Created"
+  const text = "A New Agent Created"
   const [show, setShow] = useState(false);
   const [showconfirm, setShowconfirm] = useState(false);
   const handleShow = () => setShowconfirm(true)
@@ -72,11 +72,11 @@ export default function Create() {
     <div>
       <Alertsuccess show={show} setShow={setShow} text={text}/>
       <h3>Create New Agent</h3>
-      <form onSubmit={onSubmit}>
+      <form>
 
         <Modal show={showconfirm} onHide={handleClose}>
           <Modal.Header closeButton>
-            <Modal.Title>Creating Agent</Modal.Title>
+            <Modal.Title>Creating a New Agent</Modal.Title>
           </Modal.Header>
           <Modal.Body>Are you sure you want to continue?</Modal.Body>
           <Modal.Footer>

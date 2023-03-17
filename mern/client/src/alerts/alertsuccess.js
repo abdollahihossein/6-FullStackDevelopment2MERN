@@ -9,7 +9,7 @@ function Alertsuccess({show, setShow, text}) {
     <>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header style={{ justifyContent: 'center', background: 'lightgreen' }} closeButton>
-          <Modal.Title>Agent {text}!</Modal.Title>
+          <Modal.Title>{text}!</Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ background: 'lightgreen' }}/>
         <Modal.Footer style={{ background: 'lightgreen' }}/>

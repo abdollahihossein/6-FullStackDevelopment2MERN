@@ -12,7 +12,7 @@ const dbo = require("../db/conn");
 const ObjectId = require("mongodb").ObjectId;
 
 // require auth for all workout routes
-recordRoutes.use(requireAuth)
+// recordRoutes.use(requireAuth)
 
 // This section will help you get a list of all the agents.
 recordRoutes.route("/record").get(function (req, res) {
@@ -54,6 +54,20 @@ recordRoutes.route("/record/add").post(function (req, response) {
     response.json(res);
   });
 });
+
+// This section will help you create a new transaction record.
+recordRoutes.route("/transaction").post(function (req, response) {
+  let db_connect = dbo.getDb("employees");
+  let myobj = {
+    date: new Date(),
+    amount: req.body.amount,
+    agent_id: req.body.agent_id
+  }
+  db_connect.collection("transaction").insertOne(myobj, function (err, res) {
+    if (err) throw err;
+    response.json(res);
+  })
+})
 
 // This section will help you update a record by id.
 recordRoutes.route("/update/:id").post(function (req, response) {

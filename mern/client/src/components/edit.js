@@ -9,7 +9,7 @@ export default function Edit() {
   const { user } = useAuthContext();
   const [error, setError] = useState(null);
 
-  const text = "Updated"
+  const text = "An Agent Updated"
   const [show, setShow] = useState(false);
   const [showconfirm, setShowconfirm] = useState(false);
   const handleShow = () => setShowconfirm(true)
@@ -104,11 +104,11 @@ export default function Edit() {
     <div>
       <Alertsuccess show={show} setShow={setShow} text={text}/>
       <h3>Update Agent</h3>
-      <form onSubmit={onSubmit}>
+      <form>
 
         <Modal show={showconfirm} onHide={handleClose}>
           <Modal.Header closeButton>
-            <Modal.Title>Updating Agent</Modal.Title>
+            <Modal.Title>Updating an Agent</Modal.Title>
           </Modal.Header>
           <Modal.Body>Are you sure you want to continue?</Modal.Body>
           <Modal.Footer>

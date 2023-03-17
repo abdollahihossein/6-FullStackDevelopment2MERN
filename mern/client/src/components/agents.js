@@ -11,7 +11,7 @@ export default function Agents() {
   const [records, setRecords] = useState([]);
   const { user } = useAuthContext();
 
-  const text = "Deleted"
+  const text = "An Agent Deleted"
   const [show, setShow] = useState(false);
   const [showconfirm, setShowconfirm] = useState(false);
   const [agenttodelete, setAgenttodelete] = useState(null);
@@ -107,7 +107,7 @@ export default function Agents() {
       <Alertsuccess show={show} setShow={setShow} text={text}/>
       <Modal show={showconfirm} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Deleting Agent</Modal.Title>
+          <Modal.Title>Deleting an Agent</Modal.Title>
         </Modal.Header>
         <Modal.Body>Are you sure you want to continue?</Modal.Body>
         <Modal.Footer>
