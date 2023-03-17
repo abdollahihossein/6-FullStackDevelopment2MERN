@@ -63,9 +63,16 @@ recordRoutes.route("/transaction").post(function (req, response) {
     amount: req.body.amount,
     agent_id: req.body.agent_id
   }
+
+  // validation
+  if (req.body.amount <= 0) {
+    response.status(400).json({error: 'Amount has to be a positive!'})
+    return
+  }
+
   db_connect.collection("transaction").insertOne(myobj, function (err, res) {
     if (err) throw err;
-    response.json(res);
+    response.json(myobj);
   })
 })
 

@@ -6,6 +6,7 @@ import Table from 'react-bootstrap/Table';
 import Modal from 'react-bootstrap/Modal';
 import { useAuthContext } from "../hooks/useAuthContext";
 import Alertsuccess from '../alerts/alertsuccess';
+import Failedtransaction from "../alerts/failedtransaction"
 
 function Transaction() {
   const { user } = useAuthContext();
@@ -15,6 +16,7 @@ function Transaction() {
   const text = "A New Transaction Created"
   const [show, setShow] = useState(false);
   const [showconfirm, setShowconfirm] = useState(false);
+  const [showfail, setShowfail] = useState(false);
   const handleShow = () => setShowconfirm(true)
   const handleClose = () => setShowconfirm(false)
 
@@ -82,15 +84,26 @@ function Transaction() {
     setForm({ amount: "", agent_id: ""});
     
     setShowconfirm(false)
-    setShow(true)
-    setTimeout(() => {
-      setShow(false)
-    }, 3000);
+
+    if (newTransaction.amount > 0) {
+      setShow(true)
+      setTimeout(() => {
+        setShow(false)
+      }, 3000);
+    }
+
+    if (newTransaction.amount <= 0) {
+      setShowfail(true)
+      setTimeout(() => {
+        setShowfail(false)
+      }, 3000);
+    }
   }
 
   return (
     <div>
       <Alertsuccess show={show} setShow={setShow} text={text}/>
+      <Failedtransaction show={showfail} setShow={setShowfail}/>
       {agents.length > 0 && 
       <div>
         <h3>Transactions:</h3>
