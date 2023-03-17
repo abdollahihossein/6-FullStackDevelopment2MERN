@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useSignup } from "../hooks/useSignup"
+import Failedlogin from "../alerts/failedlogin"
 
 const Signup = () => {
 
@@ -46,7 +47,7 @@ const Signup = () => {
       <br/>
       <br/>
       <button disabled={isLoading}>Sign up</button>
-      {error && <div className="error">{error}</div>}
+      {error && <Failedlogin error={error} />}
     </form>
   )
 }
