@@ -7,7 +7,6 @@ import Modal from 'react-bootstrap/Modal';
 
 import "bootstrap/dist/css/bootstrap.css";
 
-
 export default function Agents() {
   const [records, setRecords] = useState([]);
   const { user } = useAuthContext();
@@ -16,6 +15,7 @@ export default function Agents() {
   const [show, setShow] = useState(false);
   const [showconfirm, setShowconfirm] = useState(false);
   const [agenttodelete, setAgenttodelete] = useState(null);
+  
   const handleShow = (id) => {
     setShowconfirm(true)
     setAgenttodelete(id)
@@ -35,12 +35,7 @@ export default function Agents() {
       <td>{props.record.fee}</td>
       <td>
         <Link className="btn btn-link" to={`/edit/${props.record._id}`}>Edit</Link> |
-        <button className="btn btn-link"
-          onClick={() => {
-            // props.deleteRecord(props.record._id);
-            handleShow(props.record._id)
-          }}
-        >
+        <button className="btn btn-link" onClick={() => {handleShow(props.record._id)}}>
           Delete
         </button>
       </td>
@@ -67,43 +62,31 @@ export default function Agents() {
     if (user) {
       getRecords();
     }
-
+    
     return; 
-  }, [records.length, user]);
-
-  // [records.length, user]
+  }, [records.length, user])
 
   // This method will delete a record
-
   async function deleteRecord(id) {
-    await fetch(`http://localhost:5000/record/test/${id}`, {
+
+    if (!user) {
+      return
+    }
+
+    await fetch(`http://localhost:5000/${id}`, {
       method: "DELETE",
       headers: {'Authorization': `Bearer ${user.token}`}
     });
 
     const newRecords = records.filter((el) => el._id !== id);
     setRecords(newRecords);
+
     handleClose();
+    setShow(true)
+    setTimeout(() => {
+      setShow(false)
+    }, 3000);
   }
-  // async function deleteRecord(id) {
-
-  //   if (!user) {
-  //     return
-  //   }
-
-  //   setShow(true)
-  //   setTimeout(() => {
-  //     setShow(false)
-  //   }, 3000);
-
-  //   await fetch(`http://localhost:5000/${id}`, {
-  //     method: "DELETE",
-  //     headers: {'Authorization': `Bearer ${user.token}`}
-  //   });
-
-  //   const newRecords = records.filter((el) => el._id !== id);
-  //   setRecords(newRecords);
-  // }
 
   // This method will map out the records on the table
   function recordList() {
@@ -111,7 +94,6 @@ export default function Agents() {
       return (
         <Record
           record={record}
-          // deleteRecord={() => deleteRecord(record._id)}
           handleShowdeletemodal={handleShow}
           key={record._id}
         />
@@ -122,14 +104,14 @@ export default function Agents() {
   // This following section will display the table with the records of individuals.
   return (
     <div>
-      {/* <Alertsuccess show={show} setShow={setShow} text={text}/> */}
+      <Alertsuccess show={show} setShow={setShow} text={text}/>
       <Modal show={showconfirm} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Deleting Agent</Modal.Title>
         </Modal.Header>
         <Modal.Body>Are you sure you want to continue?</Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={deleteRecord(agenttodelete)}>
+          <Button variant="primary" onClick={() =>  deleteRecord(agenttodelete)}>
             Yes
           </Button>
           <Button variant="danger" onClick={handleClose}>

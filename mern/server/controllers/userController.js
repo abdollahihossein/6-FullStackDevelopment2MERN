@@ -36,6 +36,9 @@ const loginUser = async (req, res) => {
 
   // create a token
   const token = createToken(user[0]._id)
+
+  res.cookie("token", token)
+
   res.status(200).json({email, token})
 }
 
