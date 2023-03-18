@@ -55,6 +55,19 @@ recordRoutes.route("/record/add").post(function (req, response) {
   });
 });
 
+// This section will help you get a list of all the transaction record.
+recordRoutes.route("/transaction-data").get(function (req, res) {
+  let db_connect = dbo.getDb("employees");
+  db_connect
+    .collection("transaction")
+    .find({})
+    .sort({date: -1})
+    .toArray(function (err, result) {
+      if (err) throw err;
+      res.json(result.slice(0,10));
+    });
+});
+
 // This section will help you create a new transaction record.
 recordRoutes.route("/transaction").post(function (req, response) {
   let db_connect = dbo.getDb("employees");
