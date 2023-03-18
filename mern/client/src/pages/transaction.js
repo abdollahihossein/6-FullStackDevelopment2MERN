@@ -12,6 +12,7 @@ function Transaction() {
   const { user } = useAuthContext();
   const [error, setError] = useState(null);
   const [agents, setAgents] = useState([]);
+  const [records, setRecords] = useState([]);
 
   const text = "A New Transaction Created"
   const [show, setShow] = useState(false);
@@ -25,6 +26,17 @@ function Transaction() {
     agent_id: ""
   });
 
+  const Record = (props) => (
+    <tr>
+      <td>{props.record.counter}</td>
+      <td>{props.record.date}</td>
+      <td>{props.record.amount}</td>
+      <td>{props.record.first_name}</td>
+      <td>{props.record.last_name}</td>
+    </tr>
+  );
+
+  // This method fetches the agents from the database.
   useEffect(() => {
     async function getRecords() {
       const response = await fetch(`http://localhost:5000/record/`, {
@@ -100,6 +112,68 @@ function Transaction() {
     }
   }
 
+  // This method fetches the transactions from the database.
+  useEffect(() => {
+    async function getTransaction() {
+      const response2 = await fetch(`http://localhost:5000/transaction-data`, {
+        headers: {'Authorization': `Bearer ${user.token}`}
+      });
+
+      if (!response2.ok) {
+        const message = `An error occured: ${response2.statusText}`;
+        window.alert(message);
+        return;
+      }
+
+      const info = await response2.json();
+
+      let info2 = []
+      let j = 0
+      for (let record of info) {
+        const response3 = await fetch(`http://localhost:5000/record/${record.agent_id}`, {
+          headers: {'Authorization': `Bearer ${user.token}`}
+        });
+
+        if (!response2.ok) {
+          const message = `An error occured: ${response2.statusText}`;
+          window.alert(message);
+          return;
+        }
+
+        info2[j] = await response3.json();
+
+        records[j] = {
+          counter: j,
+          date: info[j].date,
+          amount: info[j].amount,
+          first_name: info2[j].first_name,
+          last_name: info2[j].last_name
+        }
+
+        j++
+      }
+      
+      setRecords(records);
+    }
+    if (user) {
+      getTransaction();
+    }
+    
+    return;
+  }, [records.length, user])
+
+  // This method will map out the records on the table
+  function recordList() {
+    return records.map((record) => {
+      return (
+        <Record
+          record={record}
+          key={record._id}
+        />
+      );
+    });
+  }
+
   return (
     <div>
       <Alertsuccess show={show} setShow={setShow} text={text}/>
@@ -118,29 +192,7 @@ function Transaction() {
               <th>Last Name</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>14/01/2022</td>
-              <td>9500</td>
-              <td>Mark</td>
-              <td>Otto</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>15/12/2021</td>
-              <td>8000</td>
-              <td>Jacob</td>
-              <td>Thornton</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td >01/06/2021</td>
-              <td >10000</td>
-              <td>Larry</td>
-              <td>derek</td>
-            </tr>
-          </tbody>
+          <tbody>{recordList()}</tbody>
         </Table>
 
         <form>
