@@ -92,7 +92,7 @@ function Transaction() {
     }
     
     return;
-  }, [render])
+  }, [render, records, user])
 
   // This method fetches the agents from the database.
   useEffect(() => {
@@ -116,7 +116,7 @@ function Transaction() {
     }
     
     return; 
-  }, [agents.length])
+  }, [agents.length, user])
 
   // These methods will update the state properties.
   function updateForm(value) {
@@ -152,10 +152,10 @@ function Transaction() {
     });
 
     setRender(!render)
-    // setForm({ amount: "", agent_id: ""});
     setShowconfirm(false)
 
     if (newTransaction.amount > 0 && newTransaction.agent_id !== "") {
+      setForm({ amount: "", agent_id: ""});
       setShow(true)
       setTimeout(() => {
         setShow(false)
@@ -235,6 +235,7 @@ function Transaction() {
                   <Form.Control 
                     type="number"
                     placeholder="Amount"
+                    value={form.amount}
                     onChange={(e) => updateForm({ amount: e.target.value })}
                   />
                 </FloatingLabel>
@@ -244,6 +245,7 @@ function Transaction() {
               <InputGroup>
                 <Form.Select
                   aria-label="Default select example"
+                  value={form.agent_id}
                   onChange={(e) => updateForm({ agent_id: e.target.value })}
                   >
                   <option value=''>Select an Agent:</option>
