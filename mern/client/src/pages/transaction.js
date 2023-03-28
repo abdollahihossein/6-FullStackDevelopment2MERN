@@ -19,6 +19,7 @@ function Transaction() {
   const [error, setError] = useState(null);
   const [agents, setAgents] = useState([]);
   const [records, setRecords] = useState([]);
+  const [render, setRender] = useState(false)
 
   const text = "A New Transaction Created"
   
@@ -43,6 +44,56 @@ function Transaction() {
     </tr>
   );
 
+  // This method fetches the transactions from the database.
+  useEffect(() => {
+    async function getTransaction() {
+      const response = await fetch(`http://localhost:5000/transaction-data`, {
+        headers: {'Authorization': `Bearer ${user.token}`}
+      });
+
+      if (!response.ok) {
+        const message = `An error occured: ${response.statusText}`;
+        window.alert(message);
+        return;
+      }
+
+      const info = await response.json();
+
+      let j = 0
+      for (let record of info) {
+        const response = await fetch(`http://localhost:5000/record/${record.agent_id}`, {
+          headers: {'Authorization': `Bearer ${user.token}`}
+        });
+
+        if (!response.ok) {
+          const message = `An error occured: ${response.statusText}`;
+          window.alert(message);
+          return;
+        }
+        
+        let info2 = await response.json();
+        
+        records[j] = {
+          counter: j + 1,
+          date: info[j].date,
+          amount: info[j].amount,
+          first_name: info2.first_name,
+          last_name: info2.last_name
+        }
+        
+        j++
+      }
+      
+      setRecords(records);
+    }
+    
+    if (user) {
+      getTransaction();
+    }
+    
+    return;
+  }, [render])
+
   // This method fetches the agents from the database.
   useEffect(() => {
     async function getRecords() {
@@ -65,7 +116,7 @@ function Transaction() {
     }
     
     return; 
-  }, [agents.length, user])
+  }, [agents.length])
 
   // These methods will update the state properties.
   function updateForm(value) {
@@ -100,8 +151,8 @@ function Transaction() {
       return;
     });
 
-    setForm({ amount: "", agent_id: ""});
-    
+    setRender(!render)
+    // setForm({ amount: "", agent_id: ""});
     setShowconfirm(false)
 
     if (newTransaction.amount > 0 && newTransaction.agent_id !== "") {
@@ -127,57 +178,6 @@ function Transaction() {
       }, 3000);
     }
   }
-  
-  // This method fetches the transactions from the database.
-  useEffect(() => {
-    async function getTransaction() {
-      const response = await fetch(`http://localhost:5000/transaction-data`, {
-        headers: {'Authorization': `Bearer ${user.token}`}
-      });
-
-      if (!response.ok) {
-        const message = `An error occured: ${response.statusText}`;
-        window.alert(message);
-        return;
-      }
-
-      const info = await response.json();
-
-      let info2 = []
-      let j = 0
-      for (let record of info) {
-        const response = await fetch(`http://localhost:5000/record/${record.agent_id}`, {
-          headers: {'Authorization': `Bearer ${user.token}`}
-        });
-
-        if (!response.ok) {
-          const message = `An error occured: ${response.statusText}`;
-          window.alert(message);
-          return;
-        }
-
-        info2[j] = await response.json();
-        
-        records[j] = {
-          counter: j + 1,
-          date: info[j].date,
-          amount: info[j].amount,
-          first_name: info2[j].first_name,
-          last_name: info2[j].last_name
-        }
-
-        j++
-      }
-      
-      setRecords(records);
-    }
-    
-    if (user) {
-      getTransaction();
-    }
-    
-    return;
-  }, [records.length, user])
 
   // This method will map out the records on the table
   function recordList() {
