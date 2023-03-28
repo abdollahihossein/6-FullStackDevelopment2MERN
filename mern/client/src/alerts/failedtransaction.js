@@ -1,7 +1,7 @@
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 
-function Failedtransaction({show, setShow}) {
+function Failedtransaction({show, setShow, text}) {
 
   const handleClose = () => setShow(false)
 
@@ -9,7 +9,7 @@ function Failedtransaction({show, setShow}) {
     <>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header style={{ justifyContent: 'center', background: 'orange' }} closeButton>
-          <Modal.Title>Amount of transaction has to be positive!</Modal.Title>
+          <Modal.Title>{text}</Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ background: 'orange' }}/>
         <Modal.Footer style={{ background: 'orange' }}/>

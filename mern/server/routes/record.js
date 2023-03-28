@@ -12,7 +12,7 @@ const dbo = require("../db/conn");
 const ObjectId = require("mongodb").ObjectId;
 
 // require auth for all workout routes
-// recordRoutes.use(requireAuth)
+recordRoutes.use(requireAuth)
 
 // This section will help you get a list of all the agents.
 recordRoutes.route("/record").get(function (req, res) {
@@ -71,8 +71,10 @@ recordRoutes.route("/transaction-data").get(function (req, res) {
 // This section will help you create a new transaction record.
 recordRoutes.route("/transaction").post(function (req, response) {
   let db_connect = dbo.getDb("employees");
+  
+  let myDate = new Date().toLocaleString("en-GB", { hour12: false }, {timeZone: "Canada/Montreal"})
   let myobj = {
-    date: new Date(),
+    date: myDate,
     amount: req.body.amount,
     agent_id: req.body.agent_id
   }
@@ -80,6 +82,10 @@ recordRoutes.route("/transaction").post(function (req, response) {
   // validation
   if (req.body.amount <= 0) {
     response.status(400).json({error: 'Amount has to be a positive!'})
+    return
+  }
+  if (req.body.agent_id == "") {
+    response.status(401).json({error: 'An agent must be chosen!'})
     return
   }
 

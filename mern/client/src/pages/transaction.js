@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
-import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import Modal from 'react-bootstrap/Modal';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
+import Button from 'react-bootstrap/Button';
+
 import { useAuthContext } from "../hooks/useAuthContext";
 import Alertsuccess from '../alerts/alertsuccess';
-import Failedtransaction from "../alerts/failedtransaction"
+import Failedtransaction from "../alerts/failedtransaction";
+
+let text2
 
 function Transaction() {
   const { user } = useAuthContext();
@@ -15,6 +21,7 @@ function Transaction() {
   const [records, setRecords] = useState([]);
 
   const text = "A New Transaction Created"
+  
   const [show, setShow] = useState(false);
   const [showconfirm, setShowconfirm] = useState(false);
   const [showfail, setShowfail] = useState(false);
@@ -97,7 +104,7 @@ function Transaction() {
     
     setShowconfirm(false)
 
-    if (newTransaction.amount > 0) {
+    if (newTransaction.amount > 0 && newTransaction.agent_id !== "") {
       setShow(true)
       setTimeout(() => {
         setShow(false)
@@ -105,45 +112,54 @@ function Transaction() {
     }
 
     if (newTransaction.amount <= 0) {
+      text2 = "Amount of transaction has to be positive!"
+      setShowfail(true)
+      setTimeout(() => {
+        setShowfail(false)
+      }, 3000);
+    }
+
+    if (newTransaction.agent_id === "") {
+      text2 = "An agent must be chosen!"
       setShowfail(true)
       setTimeout(() => {
         setShowfail(false)
       }, 3000);
     }
   }
-
+  
   // This method fetches the transactions from the database.
   useEffect(() => {
     async function getTransaction() {
-      const response2 = await fetch(`http://localhost:5000/transaction-data`, {
+      const response = await fetch(`http://localhost:5000/transaction-data`, {
         headers: {'Authorization': `Bearer ${user.token}`}
       });
 
-      if (!response2.ok) {
-        const message = `An error occured: ${response2.statusText}`;
+      if (!response.ok) {
+        const message = `An error occured: ${response.statusText}`;
         window.alert(message);
         return;
       }
 
-      const info = await response2.json();
+      const info = await response.json();
 
       let info2 = []
       let j = 0
       for (let record of info) {
-        const response3 = await fetch(`http://localhost:5000/record/${record.agent_id}`, {
+        const response = await fetch(`http://localhost:5000/record/${record.agent_id}`, {
           headers: {'Authorization': `Bearer ${user.token}`}
         });
 
-        if (!response2.ok) {
-          const message = `An error occured: ${response2.statusText}`;
+        if (!response.ok) {
+          const message = `An error occured: ${response.statusText}`;
           window.alert(message);
           return;
         }
 
-        info2[j] = await response3.json();
-
+        info2[j] = await response.json();
+        
         records[j] = {
-          counter: j,
+          counter: j + 1,
           date: info[j].date,
           amount: info[j].amount,
           first_name: info2[j].first_name,
@@ -155,6 +171,7 @@ function Transaction() {
       
       setRecords(records);
     }
+    
     if (user) {
       getTransaction();
     }
@@ -177,7 +194,7 @@ function Transaction() {
   return (
     <div>
       <Alertsuccess show={show} setShow={setShow} text={text}/>
-      <Failedtransaction show={showfail} setShow={setShowfail}/>
+      <Failedtransaction show={showfail} setShow={setShowfail} text={text2}/>
       {agents.length > 0 && 
       <div>
         <h3>Transactions:</h3>
@@ -195,8 +212,7 @@ function Transaction() {
           <tbody>{recordList()}</tbody>
         </Table>
 
-        <form>
-          
+        <Form>
           <Modal show={showconfirm} onHide={handleClose}>
             <Modal.Header closeButton>
               <Modal.Title>Creating a New Transaction</Modal.Title>
@@ -214,44 +230,41 @@ function Transaction() {
 
           <Row className="g-2">
             <Col md>
-              <div className="form-group">
-                <label htmlFor="amount">Amount of Transaction ($) :</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  id="amount"
-                  value={form.amount}
-                  onChange={(e) => updateForm({ amount: e.target.value })}
-                />
-              </div>
+              <InputGroup>
+                <FloatingLabel controlId="floatingAmount" label="Amount of Transaction ($) :">
+                  <Form.Control 
+                    type="number"
+                    placeholder="Amount"
+                    onChange={(e) => updateForm({ amount: e.target.value })}
+                  />
+                </FloatingLabel>
+              </InputGroup>
             </Col>
             <Col md>
-              <div className="form-group">
-                <label>Select an Agent:</label>
-                <select
-                  className="form-control"
-                  aria-label="Agent Select"
+              <InputGroup>
+                <Form.Select
+                  aria-label="Default select example"
                   onChange={(e) => updateForm({ agent_id: e.target.value })}
-                >
-                  <option value=''>-----</option>
+                  >
+                  <option value=''>Select an Agent:</option>
                   {agents.map(agent => (
                     <option key={agent._id} value={agent._id}>
                       {agent.first_name} {agent.last_name} - id: {agent._id}
                     </option>
                   ))}
-                </select>
-              </div>
+                </Form.Select>
+              </InputGroup>
             </Col>
             <Col xs='2'>
-              <div className="form-group">
+              <InputGroup>
                 <Button variant="primary" onClick={handleShow}>
                   Submit
                 </Button>
-              </div>
+              </InputGroup>
             </Col>
           </Row>
-
-        </form>
+        </Form>
+          
       </div>
       }
     </div>
