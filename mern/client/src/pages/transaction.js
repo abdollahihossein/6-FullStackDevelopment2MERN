@@ -13,6 +13,7 @@ import Alertsuccess from '../alerts/alertsuccess';
 import Failedtransaction from "../alerts/failedtransaction";
 
 let text2
+let isFirst = true
 
 function Transaction() {
   const { user } = useAuthContext();
@@ -94,6 +95,13 @@ function Transaction() {
     return;
   }, [render, records, user])
 
+  if (isFirst) {
+    setTimeout(() => {
+      setRender(!render)
+      isFirst = false
+    }, 1300);
+  }
+  
   // This method fetches the agents from the database.
   useEffect(() => {
     async function getRecords() {
